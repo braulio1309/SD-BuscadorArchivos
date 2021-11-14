@@ -3,15 +3,15 @@
 
 int main(){
 	
-
-	//Pedir directorio de inicio y archivo a buscar
-	/* Con un puntero a DIR abriremos el directorio */
-	DIR *dir;
-
-	//Empezaremos a leer en el directorio escrito
-	dir = opendir(".");
-
-	accion(dir);
+	char inicio[120];	
+	char encontrar[120];
+	char an[100];
+	char path[100];
+	strcpy(inicio, "./");
+//	strcpy(encontrar, "texto");
+encontrar[0] = '\0';
+vaciarCadena(encontrar);
+	procesoArchivo(inicio, encontrar, an);
 
   return 0;
 }
