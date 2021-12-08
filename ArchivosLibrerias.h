@@ -24,32 +24,38 @@ void procesoArchivo(char *start, char *path, char *encontrar, int *bandera, char
     
     if(*bandera==1) return;
     
-     
+     //dir = opendir("./");
+    //printf("hey%s", path);
    if(path[0] == '\0' ){
         dir = opendir("./");
         strcpy(path, "./");
+        //printf("if");
         
     }else{
          
         if(strcmp(path, "./") != 0){
+            //printf("%s\n", path);
             strcpy(auxpath, "/");
         }
             
         
         strcat(auxpath, start);
         strcat(path, auxpath);
+        // printf("%s\n", path);
         dir = opendir(path);
         
     }
     
+    //printf ("dir null \n");
+    //Miramos que no haya error 
     if (dir == NULL){ 
         path[strlen(path) - strlen(auxpath) ] = '\0';
-       
+        //printf("%s\n", path);
         return;
     }
     
   /* Leyendo uno a uno todos los archivos que hay */
-
+    //printf ("while");
   while ((ent = readdir (dir)) != NULL){    
         if ((strcmp(ent->d_name, ".")!=0) && strcmp(ent->d_name,"..")!=0){  //Verificar si es una carpeta       
          
