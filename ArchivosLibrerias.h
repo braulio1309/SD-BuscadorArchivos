@@ -3,65 +3,84 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include  <string.h>
-/* Función para devolver un error en caso de que ocurra */
-void error(const char *s);
-/* Función que hace algo con un archivo */
-void procesoArchivo(char *archivo);
 
+
+
+void procesoArchivo(char *start, char *path, char *encontrar, int *bandera, char **ruta);
 void vaciarCadena(char *cadena);
 
-void accion( DIR *archivo);
 
-void error(const char *s)
-{
-  /* perror() devuelve la cadena S y el error (en cadena de caracteres) que tenga errno */
-  perror (s);
-  exit(EXIT_FAILURE);
-}
 
-void procesoArchivo(char *archivo)
-{
-  /* Para "procesar", o al menos, hacer algo con el archivo, vamos a decir su tamaño en bytes */
-  /* para ello haremos lo que vemos aquí: https://poesiabinaria.net/2010/04/tamano-de-un-fichero-en-c/ */
-  FILE *fich;
-  long ftam;
-
-  fich=fopen(archivo, "r");
-  if (fich)
-    {
-      fseek(fich, 0L, SEEK_END);
-      ftam=ftell(fich);
-      fclose(fich);
-      /* Si todo va bien, decimos el tamaño */
-      printf ("%30s (%ld bytes)\n", archivo, ftam);
-    }
-  else
-    printf ("%30s (No info.)\n", archivo);
+void procesoArchivo(char *start, char *path, char *encontrar, int *bandera, char **ruta){
+    struct dirent *ent;
+    FILE *fich;
+    long ftam;
+    DIR *dir;
+    char ini[100];
+    char auxpath[100];
+    char anterior[1000];
+    auxpath[0] = '\0';
+    int i=0;
     
+    if(*bandera==1) return;
+    
+     
+   if(path[0] == '\0' ){
+        dir = opendir("./");
+        strcpy(path, "./");
+        
+    }else{
+         
+        if(strcmp(path, "./") != 0){
+            strcpy(auxpath, "/");
+        }
+            
+        
+        strcat(auxpath, start);
+        strcat(path, auxpath);
+        dir = opendir(path);
+        
+    }
+    
+    if (dir == NULL){ 
+        path[strlen(path) - strlen(auxpath) ] = '\0';
+       
+        return;
+    }
+    
+  /* Leyendo uno a uno todos los archivos que hay */
+
+  while ((ent = readdir (dir)) != NULL){    
+        if ((strcmp(ent->d_name, ".")!=0) && strcmp(ent->d_name,"..")!=0){  //Verificar si es una carpeta       
+         
+            
+            //Si revisamos si es carpeta
+
+            if ((strcmp(ent->d_name, encontrar)==0)){
+                *bandera = 1;
+                /*printf("if%s-%s\n", ent->d_name, path);
+                strcpy(*ruta, path);
+                printf("cpoy%s-%s\n", ent->d_name, encontrar);
+                strcat(*ruta, "/");
+                strcat(*ruta, encontrar);*/
+                printf ("Se encontro en la ruta: %s/%s\n", path, encontrar);
+                return ;
+            }
+            procesoArchivo(ent->d_name, path, encontrar, bandera, ruta);
+            
+                
+          
+        }
+    }
+
+    path[strlen(path) - strlen(auxpath) ] = '\0';
+    closedir (dir);
 }
+
 
 void vaciarCadena(char *cadena){
-	int i=0;
-	for(i=0; i<200; i++){
-		cadena[i] = '\0';
-	}
-}
-
-void accion(DIR *dir){
-	 struct dirent *ent;
-	/* Miramos que no haya error */
-  if (dir == NULL)
-    error("No puedo abrir el directorio");
- 
- 
-  /* Leyendo uno a uno todos los archivos que hay */
-  while ((ent = readdir (dir)) != NULL){
-      
-		/* Nos devolverá el directorio actual (.) y el anterior (..), como hace ls */
-	    if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) ){
-	    	// Una vez tenemos el archivo, lo pasamos a una función para procesarlo. 
-	      procesoArchivo(ent->d_name);
-	    }
-	}
-  closedir (dir);
+        int i=0;
+        for(i=0; i<120; i++){
+            cadena[i] = '\0';
+        }
 }
