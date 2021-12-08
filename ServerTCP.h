@@ -1,9 +1,6 @@
 
 #include <errno.h>
-typedef  struct   dato{
-	char archivo[MAXLINE];
-	int sockt;
-} data;
+
 void * conectar(void *args){
 	
     data *datas = (data *)args;
@@ -37,7 +34,7 @@ void serverTCPhilos(){
     static int clientCount = 0;
     static int clients[20];
     char buff[MAXLINE];
-    // Creación y verificación de socket
+    // socket create and verification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("socket creation failed...\n");
@@ -45,11 +42,11 @@ void serverTCPhilos(){
     }
     else
         printf("Socket successfully created..\n");
-  
+    //bzero(&servaddr, sizeof(servaddr));
    
    memset(&servaddr, 0, sizeof(servaddr));
     memset(&cli, 0, sizeof(cli));
-   
+    // assign IP, PORT
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(PORT);
@@ -57,7 +54,7 @@ void serverTCPhilos(){
    int reuse = 1;
    setsockopt(sockfd,SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
    
-    // Binding nuevo socket
+    // Binding newly created socket to given IP and verification
     if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
         printf("socket bind failed...\n");
         exit(0);
@@ -65,7 +62,7 @@ void serverTCPhilos(){
     else
         printf("Socket successfully binded..\n");
    
-    // Servidor escuchando
+    // Now server is ready to listen and verification
     if ((listen(sockfd, 5)) != 0) {
         printf("Listen failed...\n");
         exit(0);
@@ -74,22 +71,29 @@ void serverTCPhilos(){
         printf("Server listening..\n");
 	    len = sizeof(cli);
 
-	int i=0, opcion=0;
+	int i=0, opcion=0, j;
 	while(1){
-		printf("Desea conectar un clieente? (1:SI/2:NO\n");
+		printf("Desea conectar un clieente? (1:SI/2:NO/3:Listar\n");
 		scanf("%d", &opcion);
 		if(opcion==1){
+			printf("Esperando...\n");
 			connfd = accept(sockfd, (SA*)&cli, &len);
 			if(connfd < 0){
 				printf("Server fallo");
 				exit(0);
 			}else{
+				printf("Conectó cliente con id: %d\n", connfd);
 				clients[i++]= connfd;
 
 			}
-		}else{
-			break;
-		}
+		}else
+			if(opcion == 2){
+				break;
+			}else{
+				for (j=0;j<i;j++){
+					printf("Conectado cliente id: %d\n",clients[j]);
+				}
+			}
 		
 	}
     
@@ -125,7 +129,7 @@ void clientTCP(){
     int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
    char buff[MAXLINE];
-    
+    // socket create and varification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("creaciion  de socket fallo..\n");
@@ -134,12 +138,14 @@ void clientTCP(){
     else
         printf("socket  creado con exito..\n");
     bzero(&servaddr, sizeof(servaddr));
-   
+   //memset(&servaddr, 0, sizeof(servaddr));
+    // assign IP, PORT
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     servaddr.sin_port = htons(PORT);
    
-    // Conectar el cliente con el socket
+    // connect the client socket to server socket
+   
     	if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0) {
         	printf("creacion de socket fallo...\n");
         	exit(0);
@@ -147,9 +153,9 @@ void clientTCP(){
     else
         printf("conectado al servidor..\n");
     
-    
+    //memset(&servaddr, 0, sizeof(servaddr));
    int len; 
-   
+    // function for chat
    char *hello = "hola\0";
    char inicio[100];
    strcpy(inicio, "./");
