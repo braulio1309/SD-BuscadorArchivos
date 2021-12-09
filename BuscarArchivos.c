@@ -11,7 +11,7 @@ int main(){
 	char path[100];
 	int opcion =0;
 	strcpy(inicio, "./");
-	
+	//strcpy(an)
 	encontrar[0] = '\0';
 	vaciarCadena(encontrar);
 	printf("Ingrese como quiere conectar \n1: servidor UDP\n2:cliente UDP\n3:Servidor TCP\n4:Cliente TCP\n");
