@@ -34,7 +34,7 @@ void serverTCPhilos(){
     static int clientCount = 0;
     static int clients[20];
     char buff[MAXLINE];
-    // socket create and verification
+    // Crear socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("socket creation failed...\n");
@@ -42,33 +42,31 @@ void serverTCPhilos(){
     }
     else
         printf("Socket successfully created..\n");
-    //bzero(&servaddr, sizeof(servaddr));
-   
+    
    memset(&servaddr, 0, sizeof(servaddr));
     memset(&cli, 0, sizeof(cli));
-    // assign IP, PORT
+    
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(2020);
     bzero(&(servaddr.sin_zero),8);
    int reuse = 1;
    setsockopt(sockfd,SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
    
-    // Binding newly created socket to given IP and verification
+    // Bindingnueva conexion
     if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
-        printf("socket bind failed...\n");
+        printf("Error...\n");
         exit(0);
     }
     else
-        printf("Socket successfully binded..\n");
+        printf("Conectado..\n");
    
-    // Now server is ready to listen and verification
     if ((listen(sockfd, 5)) != 0) {
         printf("Listen failed...\n");
         exit(0);
     }
     else
-        printf("Server listening..\n");
+        printf("Servidor escuchando..\n");
 	    len = sizeof(cli);
 
 	int i=0, opcion=0, j;
@@ -129,7 +127,7 @@ void clientTCP(){
     int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
    char buff[MAXLINE];
-    // socket create and varification
+    // socket nuevo
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("creaciion  de socket fallo..\n");
@@ -138,13 +136,12 @@ void clientTCP(){
     else
         printf("socket  creado con exito..\n");
     bzero(&servaddr, sizeof(servaddr));
-   //memset(&servaddr, 0, sizeof(servaddr));
-    // assign IP, PORT
+   
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(2020);
    
-    // connect the client socket to server socket
+    // Conectamos cliente
    
     	if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0) {
         	printf("creacion de socket fallo...\n");
@@ -153,9 +150,8 @@ void clientTCP(){
     else
         printf("conectado al servidor..\n");
     
-    //memset(&servaddr, 0, sizeof(servaddr));
    int len; 
-    // function for chat
+    
    char *hello = "hola\0";
    char inicio[100];
    strcpy(inicio, "./");
@@ -174,9 +170,6 @@ void clientTCP(){
 	    //recibo archivo
 	    n = recv(sockfd, buff, MAXLINE, 0);
 	    if(n > 0){
-	    	//printf("Buffer %s\n", buff);
-	    	
-	    	//printf("an%s", an);
 		    procesoArchivo(inicio, encontrar, buff, &flag, rutafinal);
 		  	flag=0;
 		  	encontrar[0]= '\0';

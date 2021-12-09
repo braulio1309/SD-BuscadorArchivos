@@ -41,7 +41,7 @@ void server(){
     char hello[100];
     struct sockaddr_in servaddr, cliaddr;
        strcpy(hello, "hola");
-    // Creating socket file descriptor
+    // servidor
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
@@ -50,10 +50,10 @@ void server(){
     memset(&servaddr, 0, sizeof(servaddr));
     memset(&cliaddr, 0, sizeof(cliaddr));
        
-    // Filling server information
+    
     servaddr.sin_family    = AF_INET; // IPv4
     servaddr.sin_addr.s_addr = INADDR_ANY;
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(2002);
        
     // Bind the socket with the server address
     if ( bind(sockfd, (const struct sockaddr *)&servaddr, 
@@ -131,7 +131,7 @@ void client(){
        
     // Filling server information
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(2002);
     servaddr.sin_addr.s_addr = INADDR_ANY;
        
     int n, len;
